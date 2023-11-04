@@ -1,0 +1,83 @@
+.outerdiv{
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    width: 100%;
+    background-color: rgba(39, 60, 119, 0.611);
+    align-items: center;
+    justify-content: space-evenly;
+    color: white;
+    box-shadow: 10px 10px 10px 10px black;
+}
+.innertop{
+    display:flex;
+    width: 100%;
+    justify-content:space-evenly;
+}
+.topright{
+    display:flex;
+    justify-content:space-evenly;
+    padding: 0.5rem;
+    background-color: rgba(12, 9, 50, 0.377);
+    color: white;
+    width:55%; 
+    min-width: 15rem;
+    border-radius:1rem;
+    box-shadow: 1px 1px 4px 0px black;
+}
+.innertopright{
+    display:flex;
+    flex-direction: column;
+    justify-content:space-evenly;
+    padding: 0.5rem;
+    background-color: rgba(22, 13, 156, 0.377);
+    color: white;
+    align-items: center;
+    min-width: 15rem;
+    border-radius:1rem;
+    box-shadow: 1px 1px 4px 0px black;
+}
+.currentspan{
+    font-weight:800;
+    font-size:2em;
+    font-family: 'Courier New', Courier, monospace;
+}
+.changespan{
+    font-weight:300;
+    font-family: 'Courier New', Courier, monospace;
+    z-index: 2;
+}
+.topleft{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-evenly;
+    gap:1rem;
+    padding: 0.5rem;
+    background-color: rgba(12, 9, 50, 0.377);
+    color: white;
+    width: 20%; 
+    min-width: 15rem;
+    border-radius:1rem;
+    box-shadow: 1px 1px 4px 0px black;
+}
+button{
+    width:4rem;
+    height:2rem;
+    border-radius:0.5rem;
+}
+select{
+    width:8rem;
+    height:2.5rem;
+    border-radius:0.5rem;
+}
+input[type="text"]{
+    width:4rem;
+    height:2.5rem;
+    border-radius:0.5rem;
+}
+
+#stockChart{
+    width:75% !important;
+    height:60% !important;
+    border-color: rgba(255, 255, 255, 0.1);
+}
