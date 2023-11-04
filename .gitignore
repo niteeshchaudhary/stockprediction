@@ -1,6 +1,6 @@
 flaskenv
 frontend/node_modules
-backend/.env
+backend/env
 backend/extra
 backend/graphs
 backend/.vscode

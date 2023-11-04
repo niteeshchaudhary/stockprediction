@@ -1,3 +1,7 @@
+download model and tokenizer folder from
+https://drive.google.com/drive/folders/1PPKOWUygpNf9HfECWR1wLgiKwNWMGFPx?usp=sharing
+and place them in backend folder.
+
 goto frontend folder and execute following commands:
 npm i --force
 to run:
