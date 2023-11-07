@@ -11,6 +11,7 @@ const StockChart = ({ stockData, prediction }) => {
     // Create the new chart
     const ctx = document.getElementById("stockChart");
     var arr = Array(kp).fill(null);
+    var arrlstm = Array(kp).fill(null);
     var data = stockData.map((item) => item.Close).slice(-kp);
     var dates = stockData.map((item) => item.Date).slice(-kp);
     const today = new Date();
@@ -20,9 +21,19 @@ const StockChart = ({ stockData, prediction }) => {
 
     const formattedDate = `${year}-${month}-${day}`;
     console.log(prediction, data[data.length - 1]);
-    if (prediction > 0) {
+    var colorp = "rgb(255, 1, 1)";
+    var colorp2 = "rgb(255, 1, 255)";
+    if (prediction?.pvalue > 0) {
       arr[kp - 1] = data[data.length - 1];
-      arr = [...arr, prediction];
+      arrlstm[kp - 1] = data[data.length - 1];
+      arr = [...arr, prediction?.pvalue];
+      arrlstm = [...arrlstm, prediction?.pvaluelstm];
+      if (Number(prediction?.pvalue) - Number(data[data.length - 1]) > 0) {
+        colorp = "rgb(1, 255, 1)";
+      }
+      if (Number(prediction?.pvaluelstm) - Number(data[data.length - 1]) > 0) {
+        colorp2 = "rgb(255, 255, 1)";
+      }
       dates = [...dates, formattedDate];
     }
     var newChart = new Chart(ctx, {
@@ -31,7 +42,7 @@ const StockChart = ({ stockData, prediction }) => {
         labels: dates,
         datasets: [
           {
-            label: "Close Price",
+            label: "Past Close Price",
             data: data,
             fill: false,
             borderColor: "rgb(75, 192, 192)",
@@ -40,10 +51,19 @@ const StockChart = ({ stockData, prediction }) => {
           {
             label: "Predicted Close Price",
             data: arr, // Create an array with null values
-            pointRadius: 5,
-            pointBackgroundColor: "red", // Set the point color to red at the target date index
-            borderColor: "rgb(255, 1, 1)",
+            pointRadius: 8,
+            fill: false,
+            pointBackgroundColor: colorp, // Set the point color to red at the target date index
+            borderColor: colorp,
             tension: 0.1,
+          },
+          {
+            label: "LSTM Predicted Close Price",
+            data: arrlstm, // Create an array with null values
+            pointRadius: 5,
+            pointBackgroundColor: colorp2, // Set the point color to red at the target date index
+            borderColor: colorp2,
+            tension: 0.2,
           },
         ],
       },

@@ -232,3 +232,753 @@ p1=1064.1801282973427
 p2=1132.7774555834653
 p3=0
 result=1139.9893905021324
+data downloaded
+1
+SUNPHARMA.NS
+./csvfiles/SUNPHARMA.NS2023-11-06.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1064.6924587148217
+p2=1140.234765191381
+p3=0
+result=1147.1045744547014
+data downloaded
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-06.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=3375.4217021157356
+p2=3355.3612699285277
+p3=-10
+result=3054.5823815661925
+data downloaded
+1
+CIPLA.NS
+./csvfiles/CIPLA.NS2023-11-06.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1097.6576804788474
+p2=1204.904940192562
+p3=0
+result=1210.5191540116646
+data downloaded
+1
+BAJFINANCE.NS
+./csvfiles/BAJFINANCE.NS2023-11-06.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=7071.754952954654
+p2=7410.867953654538
+p3=0
+result=7464.62985314909
+data downloaded
+1
+NTPC.NS
+./csvfiles/NTPC.NS2023-11-06.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=203.08367594369594
+p2=234.41220691662713
+p3=0
+result=234.87661712741752
+data downloaded
+1
+AXISBANK.NS
+./csvfiles/AXISBANK.NS2023-11-06.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=954.368856974096
+p2=989.4872869274215
+p3=0
+result=997.2750539994961
+file_pathexist file opens
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-06.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=3375.4217021157356
+p2=3355.3612699285277
+p3=-10
+result=3054.5823815661925
+data downloaded
+1
+HDFCBANK.NS
+./csvfiles/HDFCBANK.NS2023-11-06.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1600.4991424300017
+p2=1483.3887372560293
+p3=0
+result=1505.249248939028
+data downloaded
+1
+INFY.NS
+./csvfiles/INFY.NS2023-11-06.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+file_pathexist file opens
+data downloaded
+1
+INFY.NS
+./csvfiles/INFY.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1418.4219680307242
+p2=1404.3239891422666
+p3=-21
+file_pathexist file opens
+1
+INFY.NS
+./csvfiles/INFY.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1418.4219680307242
+p2=1404.3239891422666
+p3=-21
+p4=[1341.4742]
+result=1124.3050700471208
+file_pathexist file opens
+1
+INFY.NS
+./csvfiles/INFY.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1418.4219680307242
+p2=1404.3239891422666
+p3=-21
+p4=[1411.0356]
+result=1124.3050700471208
+data downloaded
+1
+HEROMOTOCO.NS
+./csvfiles/HEROMOTOCO.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=2884.5066132905636
+p2=3166.8095874094743
+p3=0
+p4=[3177.09]
+result=3181.539504836434
+data downloaded
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.001]
+p1=3375.1365535836635
+p2=3381.7008210322383
+p3=-18
+p4=[3362.1936]
+result=3354.2533584170656
+data downloaded
+data downloaded
+file_pathexist file opens
+1
+SUNPHARMA.NS
+./csvfiles/SUNPHARMA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.001]
+file_pathexist file opens
+data downloaded
+1
+BAJFINANCE.NS
+./csvfiles/BAJFINANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.001]
+p1=7074.427095082566
+p2=7570.597991093487
+p3=-1
+p4=[7613.7427]
+result=7608.963119252672
+1
+BAJFINANCE.NS
+./csvfiles/BAJFINANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=7074.427095082566
+p2=7570.597991093487
+p3=-1
+p4=[7996.834]
+result=7540.827737332831
+file_pathexist file opens
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.05, 0.94, 0.01]
+p1=3375.1365535836635
+p2=3381.7008210322383
+p3=-20
+p4=[3396.0137]
+result=2671.2154352430393
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=3375.1365535836635
+p2=3381.7008210322383
+p3=-19
+p4=[3421.2812]
+result=2738.7838089891984
+file_pathexist file opens
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=3375.1365535836635
+p2=3381.7008210322383
+p3=-19
+p4=3386.135009765625
+result=2738.7838089891984
+file_pathexist file opens
+1
+SUNPHARMA.NS
+./csvfiles/SUNPHARMA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+file_pathexist file opens
+file_pathexist file opens
+file_pathexist file opens
+1
+BAJFINANCE.NS
+./csvfiles/BAJFINANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=7074.427095082566
+p2=7570.597991093487
+p3=-1
+p4=7661.390625
+result=7465.121757421896
+1
+BAJFINANCE.NS
+./csvfiles/BAJFINANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=7074.427095082566
+p2=7570.597991093487
+p3=-1
+p4=7747.54296875
+result=7465.121757421896
+1
+BAJFINANCE.NS
+./csvfiles/BAJFINANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=7074.427095082566
+p2=7570.597991093487
+p3=-1
+p4=7450.64208984375
+result=7465.121757421896
+file_pathexist file opens
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=3375.1365535836635
+p2=3381.7008210322383
+p3=-20
+p4=3397.68896484375
+result=2704.966800778876
+file_pathexist file opens
+file_pathexist file opens
+data downloaded
+1
+SUNPHARMA.NS
+./csvfiles/SUNPHARMA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=1065.2815992093679
+p2=1146.1978619546815
+p3=0
+p4=1125.5487060546875
+result=1141.3428861899627
+file_pathexist file opens
+1
+CIPLA.NS
+./csvfiles/CIPLA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+file_pathexist file opens
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=3375.1365535836635
+p2=3381.7008210322383
+p3=-9
+p4=3403.2216796875
+result=3076.953891092422
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=3375.1365535836635
+p2=3381.7008210322383
+p3=-4
+p4=3321.44287109375
+result=3246.0389321440343
+file_pathexist file opens
+1
+SUNPHARMA.NS
+./csvfiles/SUNPHARMA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=1065.2815992093679
+p2=1146.1978619546815
+p3=0
+p4=1119.7432861328125
+result=1141.3428861899627
+file_pathexist file opens
+1
+CIPLA.NS
+./csvfiles/CIPLA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+data downloaded
+1
+CIPLA.NS
+./csvfiles/CIPLA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=1098.425457094147
+p2=1203.8087497583588
+p3=0
+p4=1245.3974609375
+result=1197.4857521985061
+file_pathexist file opens
+1
+BAJFINANCE.NS
+./csvfiles/BAJFINANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=7074.427095082566
+p2=7570.597991093487
+p3=0
+p4=7615.71337890625
+result=7540.827737332831
+data downloaded
+1
+NTPC.NS
+./csvfiles/NTPC.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=203.28879750299336
+p2=235.7294585417322
+p3=0
+p4=245.59454345703125
+result=233.78301887940785
+data downloaded
+1
+AXISBANK.NS
+./csvfiles/AXISBANK.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=954.7827798253342
+p2=1005.3852847679883
+p3=0
+p4=985.0671997070312
+result=1002.349134471429
+data downloaded
+1
+HDFCBANK.NS
+./csvfiles/HDFCBANK.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=1599.609710170172
+p2=1495.172582371129
+p3=0
+p4=1506.4676513671875
+result=1501.4388100390715
+data downloaded
+1
+ICICIBANK.NS
+./csvfiles/ICICIBANK.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.94, 0.01]
+p1=932.5128744508106
+p2=945.2464794513985
+p3=0
+p4=939.9295043945312
+result=944.4824631513632
+data downloaded
+1
+RELIANCE.NS
+./csvfiles/RELIANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=2448.78260390119
+p2=2334.892034867817
+p3=0
+p4=2254.359375
+result=2365.0743893584977
+data downloaded
+data downloaded
+1
+HCLTECH.NS
+./csvfiles/HCLTECH.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1159.8188373258254
+p2=1268.7356094853878
+p3=-4
+p4=1262.365234375
+result=1224.1385348712524
+file_pathexist file opens
+1
+INFY.NS
+./csvfiles/INFY.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1418.4219680307242
+p2=1404.3239891422666
+p3=-4
+p4=1377.9249267578125
+result=1363.040148201306
+1
+INFY.NS
+./csvfiles/INFY.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.02]
+p1=1418.4219680307242
+p2=1404.3239891422666
+p3=-10
+p4=1329.749755859375
+result=1138.3483099385435
+1
+INFY.NS
+./csvfiles/INFY.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1418.4219680307242
+p2=1404.3239891422666
+p3=-10
+p4=1367.7806396484375
+result=1278.78070885277
+file_pathexist file opens
+1
+BAJFINANCE.NS
+./csvfiles/BAJFINANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=7074.427095082566
+p2=7570.597991093487
+p3=-1
+p4=7426.154296875
+result=7540.827737332831
+file_pathexist file opens
+1
+NTPC.NS
+./csvfiles/NTPC.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=203.28879750299336
+p2=235.7294585417322
+p3=0
+p4=237.41920471191406
+result=236.14031346482517
+file_pathexist file opens
+1
+AXISBANK.NS
+./csvfiles/AXISBANK.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=954.7827798253342
+p2=1005.3852847679883
+p3=-1
+p4=975.1946411132812
+result=1002.349134471429
+file_pathexist file opens
+1
+RELIANCE.NS
+./csvfiles/RELIANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=2448.78260390119
+p2=2334.892034867817
+p3=0
+p4=2347.36083984375
+result=2365.0743893584977
+file_pathexist file opens
+1
+TATASTEEL.NS
+./csvfiles/TATASTEEL.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=118.18652729457722
+p2=119.65059504573027
+p3=0
+p4=119.85489654541016
+result=120.75925693111837
+file_pathexist file opens
+file_pathexist file opens
+1
+CIPLA.NS
+./csvfiles/CIPLA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1098.425457094147
+p2=1203.8087497583588
+p3=0
+p4=1138.48193359375
+result=1209.5238396960897
+file_pathexist file opens
+file_pathexist file opens
+file_pathexist file opens
+1
+NTPC.NS
+./csvfiles/NTPC.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=203.28879750299336
+p2=235.7294585417322
+p3=0
+p4=238.26736450195312
+result=236.14031346482517
+file_pathexist file opens
+1
+BAJFINANCE.NS
+./csvfiles/BAJFINANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=7074.427095082566
+p2=7570.597991093487
+p3=-1
+p4=7548.703125
+result=7540.827737332831
+file_pathexist file opens
+1
+AXISBANK.NS
+./csvfiles/AXISBANK.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=954.7827798253342
+p2=1005.3852847679883
+p3=-1
+p4=1019.6259155273438
+result=1002.349134471429
+file_pathexist file opens
+1
+HDFCBANK.NS
+./csvfiles/HDFCBANK.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1599.609710170172
+p2=1495.172582371129
+p3=-1
+p4=1516.865478515625
+result=1501.4388100390715
+file_pathexist file opens
+1
+ICICIBANK.NS
+./csvfiles/ICICIBANK.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=932.5128744508106
+p2=945.2464794513985
+p3=-1
+p4=932.14208984375
+result=944.4824631513632
+file_pathexist file opens
+1
+RELIANCE.NS
+./csvfiles/RELIANCE.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=2448.78260390119
+p2=2334.892034867817
+p3=0
+p4=2368.942138671875
+result=2365.0743893584977
+file_pathexist file opens
+1
+TATASTEEL.NS
+./csvfiles/TATASTEEL.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=118.18652729457722
+p2=119.65059504573027
+p3=0
+p4=120.95901489257812
+result=120.75925693111837
+data downloaded
+1
+SBIN.NS
+./csvfiles/SBIN.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=580.2175928448715
+p2=575.3075273202007
+p3=0
+p4=569.0130615234375
+result=581.355206524883
+data downloaded
+1
+BHARTIARTL.NS
+./csvfiles/BHARTIARTL.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=859.2836976809506
+p2=938.6697853601291
+p3=0
+p4=912.1378784179688
+result=943.2933179529797
+data downloaded
+1
+MARUTI.NS
+./csvfiles/MARUTI.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=9549.48629520844
+p2=10283.934278968765
+p3=0
+p4=10677.494140625
+result=10342.706742732833
+data downloaded
+1
+COALINDIA.NS
+./csvfiles/COALINDIA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=250.90449429086723
+p2=316.0957301230274
+p3=0
+p4=294.57421875
+result=315.34521327432805
+file_pathexist file opens
+1
+HEROMOTOCO.NS
+./csvfiles/HEROMOTOCO.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=2884.5066132905636
+p2=3166.8095874094743
+p3=0
+p4=3071.621826171875
+result=3181.539504836434
+file_pathexist file opens
+1
+COALINDIA.NS
+./csvfiles/COALINDIA.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=250.90449429086723
+p2=316.0957301230274
+p3=0
+p4=334.460693359375
+result=315.34521327432805
+file_pathexist file opens
+1
+INFY.NS
+./csvfiles/INFY.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1418.4219680307242
+p2=1404.3239891422666
+p3=-10
+p4=1355.00244140625
+result=1278.78070885277
+data downloaded
+1
+ITC.NS
+./csvfiles/ITC.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=420.94469073186156
+p2=435.0591182557782
+p3=-2
+p4=437.5604553222656
+result=429.86166142178536
+file_pathexist file opens
+1
+HCLTECH.NS
+./csvfiles/HCLTECH.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=1159.8188373258254
+p2=1268.7356094853878
+p3=-10
+p4=1248.2352294921875
+result=1148.0143983021292
+file_pathexist file opens
+1
+TCS.NS
+./csvfiles/TCS.NS2023-11-07.csv
+file_pathexist file opens
+got weights
+[0.06, 0.95, 0.01]
+p1=3375.1365535836635
+p2=3381.7008210322383
+p3=-10
+p4=3400.9921875
+result=3076.953891092422

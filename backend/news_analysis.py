@@ -139,7 +139,7 @@ def analyze_news(news_text):
 
 
 def get_news_report():
-    links=['https://finance.yahoo.com/topic/yahoo-finance-originals','https://finance.yahoo.com/topic/stock-market-news/','https://finance.yahoo.com/live/politics/','https://finance.yahoo.com/topic/economic-news','https://finance.yahoo.com/topic/morning-brief/']
+    links=['https://finance.yahoo.com/topic/yahoo-finance-originals','https://finance.yahoo.com/live/politics/','https://finance.yahoo.com/topic/economic-news']
     for i in links:
         try:
             news=getNews(i)

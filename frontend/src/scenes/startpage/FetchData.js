@@ -6,7 +6,6 @@ import "./mystyle.css";
 // const cheerio = require("cheerio");
 
 const codetourl = [
-  "tcs",
   // "tata motors",
   "sunpharma",
   "cipla",
@@ -32,6 +31,7 @@ const codetourl = [
   "infosys",
   "itc",
   "hcl",
+  "tcs",
 ];
 
 // function scrapeChartData(html) {
@@ -145,7 +145,7 @@ async function fetchPrediction(company) {
   }
 }
 export default function FetchData() {
-  const [prediction, setprediction] = useState(0);
+  const [prediction, setprediction] = useState({});
   const [comp, setcomp] = useState([]);
   const [current, setcurrent] = useState([]);
   const [load, setload] = useState(false);
@@ -159,19 +159,18 @@ export default function FetchData() {
     }
     console.log(event.target.value, "**");
     setSelectedOption(company);
-    setprediction(0);
+    setprediction({});
     setload(true);
     getData(company).then((rs) => {
       console.log(rs?.data);
       // setcurrent(rs?.data?.current);
       setcomp(rs?.data);
       setload(false);
-    })
+    });
     fetchCurrent(company).then((rs) => {
       console.log(rs?.data);
       setcurrent(rs?.data.values);
     });
-
   };
 
   const getPrediction = (e) => {
@@ -179,7 +178,7 @@ export default function FetchData() {
     setload(true);
     const company = document.getElementById("inp").value;
     fetchPrediction(company).then((rs) => {
-      setprediction(rs?.data?.pvalue);
+      setprediction(rs?.data);
       console.log(rs);
       document.getElementById("sub").disabled = false;
       setload(false);
@@ -236,18 +235,21 @@ export default function FetchData() {
         </div>
         <div className="topright">
           <div className="innertopright">
-            {current.length > 0 && <><span className="currentspan"> {current[0]}</span>
-            <span
-              className="changespan"
-              style={{
-                color:
-                   current[1][0] === "-" ? "red" : "green",
-              }}
-            >
-              {" "}
-              {current[1]}
-              {current[2]}
-            </span></>}
+            {current.length > 0 && (
+              <>
+                <span className="currentspan"> {current[0]}</span>
+                <span
+                  className="changespan"
+                  style={{
+                    color: current[1][0] === "-" ? "red" : "green",
+                  }}
+                >
+                  {" "}
+                  {current[1]}
+                  {current[2]}
+                </span>
+              </>
+            )}
           </div>
           <div
             className="topright"
@@ -259,7 +261,13 @@ export default function FetchData() {
           ></div>
         </div>
       </div>
-      {prediction > 0 && <p>Today's Closing price:{prediction}</p>}
+      {prediction?.pvalue > 0 && (
+        <p>
+          Today's Closing price:{prediction?.pvalue}
+          <br />
+          Lstm Closing price:{prediction?.pvaluelstm}
+        </p>
+      )}
       <StockChart stockData={comp} prediction={prediction} />
       {/* <table border="1">
         <tbody>

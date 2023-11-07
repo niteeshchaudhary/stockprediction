@@ -8,6 +8,7 @@ from datetime import datetime
 import news_analysis
 import rahul_analysis
 import timeseriesprediction
+import lstmprediction
 import pandas as pd
 from flask_cors import CORS
 
@@ -138,6 +139,7 @@ def predict(company):
     # dfw=pd.read_csv("my_weights.csv")
     # print(dfw.head())
     weights = [0.06,0.95,0.01]#[float(value) for value in dfw.iloc[1]}
+    weights2 = [0.07,0.93,0.01]
     fl.write(f"got weights\n{weights}\n")
     p1=rahul_analysis.getPrediction(df)
     fl.write(f"p1={p1}\n")
@@ -145,7 +147,10 @@ def predict(company):
     fl.write(f"p2={p2}\n")
     p3=news_sentiment[company]
     fl.write(f"p3={p3}\n")
+    p4=lstmprediction.getPrediction(df)[0]
+    fl.write(f"p4={p4}\n")
     result=(p1*weights[0])+(p2*weights[1])+(p3*weights[2]*p2)
+    result2=(p1*weights2[0])+(p4*weights2[1])+(p3*weights2[2]*p4)
     fl.write(f"result={result}\n")
     fl2=open("weigpiphtreg.csv","a")
     closep=0
@@ -154,13 +159,13 @@ def predict(company):
         closep=df["Close"].loc[last_index_label]
     except:
         pass
-    fl2.write(f"{p1},{p2},{p3},{closep},{result}\n")
+    fl2.write(f"{p1},{p2},{p3},{p4},{closep},{result}\n")
     fl2.close()
-    response = Response(jsonify({'pvalue': str(result)}), content_type='application/json')
+    response = Response(jsonify({'pvalue': str(result),'pvaluelstm': str(result2)}), content_type='application/json')
     response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE'
 
-    return jsonify({'pvalue': str(result)})
+    return jsonify({'pvalue': str(result),'pvaluelstm': str(result2)})
 
 @app.route('/data/<company>', methods=['GET'])
 def getdata(company):
@@ -172,10 +177,12 @@ def getdata(company):
             fl.write(f"file_pathexist file opens\n")
             df = pd.read_csv(file_path)   
     else:
+        
         df= yf.download(ticker, start_date, end_date)
         fl.write(f"data downloaded\n")
         df["Date"]=df.index
-        df.to_csv(file_path, index=False)
+        if(len(df)>2):
+            df.to_csv(file_path, index=False)
     # lst=getcurrentInfo(company)
     # dc={'current':lst,'table':df.to_dict(orient='records')}
     response = Response(df.to_json(orient='records'), content_type='application/json')
