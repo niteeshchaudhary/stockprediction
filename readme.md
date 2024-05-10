@@ -1,9 +1,11 @@
-# Stock Prediction
-Predict the closing price of stocks with the help of previous data and todays news sentiments.
-The model uses moving average, different stock strategies and news sentiments as factors and predict the closing price.
+# StockPrediction
+
+-Predict the closing price of stocks with the help of previous data and todays news sentiments.
+-The model uses moving average, different stock strategies and news sentiments as factors and predict the closing price.
 Stock and news data is collected using yahoo web scrapping.
 
 
+# How to run ? 
 download model and tokenizer folder from
 https://drive.google.com/drive/folders/1PPKOWUygpNf9HfECWR1wLgiKwNWMGFPx?usp=sharing
 and place them in backend folder.
