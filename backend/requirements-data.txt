@@ -1,0 +1,6 @@
+# Minimal dependencies for historical data and current quote endpoints.
+# Use requirements.txt for prediction and news analysis dependencies.
+Flask==3.0.0
+Flask-Cors==4.0.0
+pandas>=2.1.2,<4
+numpy>=1.26,<3

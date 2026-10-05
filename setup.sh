@@ -1,7 +1,7 @@
 cd backend
-python –m venv env
+python -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 cd ..
-cd frontend
-npm i --force
+cd frontend_nw
+npm install

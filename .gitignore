@@ -8,4 +8,11 @@ backend/.vscode
 backend/csvfiles
 backend/model
 backend/tokenizer
+__pycache__/
+backend/logs/
+frontend_nw/node_modules/
+frontend_nw/dist/
+frontend_nw/.env
+frontend_nw/.env.local
+frontend_nw/.preview/
 

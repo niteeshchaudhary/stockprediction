@@ -1,0 +1,2 @@
+# Optional: install in addition to requirements-data.txt only to enable LSTM.
+tensorflow>=2.16

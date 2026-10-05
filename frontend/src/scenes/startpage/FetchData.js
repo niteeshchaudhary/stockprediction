@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ThreeCircles } from "react-loader-spinner";
 import StockChart from "./StockChart";
 import "./mystyle.css";
@@ -34,159 +34,66 @@ const codetourl = [
   "tcs",
 ];
 
-// function scrapeChartData(html) {
-//   const $ = cheerio.load(html);
-//   // Select the element containing the chart data
-//   const chartDataElement = $('#highcharts-4rhpq0p-0'); // Replace with the actual selector
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000",
+  timeout: 60000,
+});
 
-//   // Extract the data from the element
-//   const chartData = JSON.parse(chartDataElement.text());
+const errorMessage = (error) =>
+  error.response?.data?.error ||
+  "Unable to fetch stock data. Check that the backend is running and try again.";
 
-//   return chartData;
-// }
-
-// async function scraperWeb(symbol, e) {
-//   try {
-//     console.log(symbol);
-//     const response = await axios.get(
-//       `http://localhost:5000/api/data/${symbol}`
-//     );
-//     // const response = await axios.get(
-//     //   `http://localhost:5000/api/cprice/${symbol}`
-//     // );
-//     console.log(response);
-
-//     const $ = cheerio.load(response.data);
-//     // const priceElement = $("#quote-header-info").find(
-//     //   'fin-streamer[class="Fw(b) Fz(36px) Mb(-4px) D(ib)"]'
-//     // );
-
-//     const chrt=scrapeChartData(response.data);
-//     console.log(chrt);
-//     console.log($("#futuresTab"));
-//     const priceElement = $(".ltp");
-//     const th = $("#futuresTab").find("th");
-//     const td = $("#futuresTab").find("td");
-//     const tableTexts = {};
-//     th.each((index, wrapperElement) => {
-//       const thText = $(wrapperElement).text().trim(); // Trim to remove extra whitespace
-//       const tdText = $(td[index]).text().trim();
-//       tableTexts[thText] = tdText;
-//     });
-//     console.log(tableTexts);
-//     const price = priceElement.text().trim();
-//     const index = price.indexOf(".");
-//     const formattedPrice =
-//       price.substring(0, index) + "." + price.substring(index + 1, index + 3);
-//     return { price: formattedPrice, table: tableTexts };
-//   } catch (error) {
-//     throw error;
-//   }
-// }
-// scraperWeb(sym, e)
-//       .then((data) => {
-//         console.log("Stock price:", data);
-//         document.getElementById("sub").disabled = false;
-//         setcomp(data.table);
-//         setprice(data.price);
-//       })
-//       .catch((error) => {
-//         console.error("Error:", error);
-//         e.currentTarget.disabled = false;
-//       });
-
-async function getData(company) {
-  try {
-    console.log(company);
-    const response = await axios.get(`http://localhost:5000/data/${company}`, {
-      headers: {
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-        "Content-Type": "application/json",
-      },
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
-}
-
-async function fetchCurrent(company) {
-  try {
-    console.log(company);
-    const response = await axios.get(
-      `http://localhost:5000/data/current/${company}`,
-      {
-        headers: {
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response;
-  } catch (error) {
-    throw error;
-  }
-}
-async function fetchPrediction(company) {
-  try {
-    console.log(company);
-    const response = await axios.get(
-      `http://localhost:5000/data/predict/${company}`,
-      {
-        headers: {
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response;
-  } catch (error) {
-    throw error;
-  }
-}
 export default function FetchData() {
   const [prediction, setprediction] = useState({});
   const [comp, setcomp] = useState([]);
   const [current, setcurrent] = useState([]);
   const [load, setload] = useState(false);
   const [selectedOption, setSelectedOption] = useState("none");
-  console.log(current.length);
-  const handleSelectChange = (event) => {
+  const [error, setError] = useState("");
+  const requestId = useRef(0);
+
+  useEffect(() => () => { requestId.current += 1; }, []);
+
+  const handleSelectChange = async (event) => {
     const company = event.target.value;
-    console.log(event.target.value);
-    if (company === "none") {
-      return;
-    }
-    console.log(event.target.value, "**");
+    const id = ++requestId.current;
     setSelectedOption(company);
     setprediction({});
-    setload(true);
-    getData(company).then((rs) => {
-      console.log(rs?.data);
-      // setcurrent(rs?.data?.current);
-      setcomp(rs?.data);
-      setload(false);
-    });
-    fetchCurrent(company).then((rs) => {
-      console.log(rs?.data);
-      setcurrent(rs?.data.values);
-    });
+    setcomp([]);
+    setcurrent([]);
+    setError("");
+    setload(company !== "none");
+    if (company === "none") return;
+
+    const symbol = encodeURIComponent(company);
+    const results = await Promise.allSettled([
+      api.get(`/data/${symbol}`),
+      api.get(`/data/current/${symbol}`),
+    ]);
+    if (id !== requestId.current) return;
+    if (results[0].status === "fulfilled") setcomp(results[0].value.data);
+    if (results[1].status === "fulfilled") setcurrent(results[1].value.data.values);
+    const failures = results.filter((result) => result.status === "rejected");
+    setError([...new Set(failures.map((result) => errorMessage(result.reason)))].join(" "));
+    setload(false);
   };
 
-  const getPrediction = (e) => {
-    e.currentTarget.disabled = true;
+  const getPrediction = async () => {
+    if (selectedOption === "none" || load || !comp.length) return;
+    const id = ++requestId.current;
     setload(true);
-    const company = document.getElementById("inp").value;
-    fetchPrediction(company).then((rs) => {
-      setprediction(rs?.data);
-      console.log(rs);
-      document.getElementById("sub").disabled = false;
-      setload(false);
-    });
+    setError("");
+    try {
+      const response = await api.get(`/data/predict/${encodeURIComponent(selectedOption)}`, {
+        timeout: 300000,
+      });
+      if (id === requestId.current) setprediction(response.data);
+    } catch (error) {
+      if (id === requestId.current) setError(errorMessage(error));
+    } finally {
+      if (id === requestId.current) setload(false);
+    }
   };
-  useEffect(() => {
-    setload(false);
-  }, [comp]);
 
   return (
     <div className="outerdiv">
@@ -228,7 +135,7 @@ export default function FetchData() {
               justifyContent: "space-between",
             }}
           >
-            <button onClick={getPrediction} id="sub">
+            <button onClick={getPrediction} id="sub" disabled={load || !comp.length || selectedOption === "none"}>
               Predict
             </button>
           </div>
@@ -268,6 +175,7 @@ export default function FetchData() {
           Lstm Closing price:{prediction?.pvaluelstm}
         </p>
       )}
+      {error && <p role="alert">{error}</p>}
       <StockChart stockData={comp} prediction={prediction} />
       {/* <table border="1">
         <tbody>
