@@ -15,4 +15,6 @@ frontend_nw/dist/
 frontend_nw/.env
 frontend_nw/.env.local
 frontend_nw/.preview/
+**/.env
+**/.preview/
 
