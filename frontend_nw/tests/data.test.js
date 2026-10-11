@@ -1,6 +1,6 @@
 import { afterEach, test, mock } from 'node:test'
 import assert from 'node:assert/strict'
-import { fetchHistory, fetchQuote, fetchForecast, request } from '../src/lib/api.js'
+import { fetchHistory, fetchQuote, fetchForecast, fetchTrend, request } from '../src/lib/api.js'
 import { STOCKS, filterHistory, money, exportHistory } from '../src/lib/stocks.js'
 
 afterEach(() => mock.restoreAll())
@@ -29,12 +29,20 @@ test('empty history is an actionable failure', async () => {
 
 test('quote change is calculated from the previous close', async () => {
   respond({ values: ['110.00', '+10.00', '(+10.00%)'] })
-  assert.deepEqual(await fetchQuote(stock), { price: 110, change: 10, percent: 10 })
+  assert.deepEqual(await fetchQuote(stock), { price: 110, change: 10, percent: 10, quotedAt: null, fetchedAt: null, provider: null })
 })
 
 test('provider errors preserve the backend message', async () => {
   respond({ error: 'Market provider unavailable' }, 503)
   await assert.rejects(fetchHistory(stock), /Market provider unavailable/)
+})
+
+test('quote source timestamps stay distinct from fetch timestamps', async () => {
+  respond({ values: ['110', '+10'], quoted_at: '2026-10-09T10:00:00+00:00', fetched_at: '2026-10-11T10:00:00+00:00', provider: 'yahoo' })
+  const quote = await fetchQuote(stock)
+  assert.equal(quote.quotedAt, '2026-10-09T10:00:00+00:00')
+  assert.equal(quote.fetchedAt, '2026-10-11T10:00:00+00:00')
+  assert.equal(quote.provider, 'yahoo')
 })
 
 test('non-JSON proxy failures explain how to reconnect', async () => {
@@ -57,6 +65,21 @@ test('stock switching can cancel a pending request', async () => {
   const pending = request('/data/reliance', { signal: controller.signal })
   controller.abort()
   await assert.rejects(pending, { name: 'AbortError' })
+})
+
+test('forecast preserves ensemble comparisons and evaluation metadata', async () => {
+  const analysis = { price: 123, models: [{ id: 'baseline', mape: 1 }], evaluation_sessions: 20, beats_baseline: false }
+  respond({ pvalue: 120, pvaluelstm: null, analysis })
+  assert.deepEqual((await fetchForecast(stock)).analysis, analysis)
+})
+
+test('trend requests preserve missing-input coverage and reject invalid analyses', async () => {
+  const analysis = { score: -5, coverage: 30, factors: [], fundamentals: { available: false }, indicators: {}, news: [], policy_news: [], warnings: ['Missing inputs'] }
+  respond(analysis)
+  assert.deepEqual(await fetchTrend(stock), analysis)
+  assert.equal(globalThis.fetch.mock.calls[0].arguments[0], '/api/data/trend/bajaj%20finance')
+  respond({ score: 'NaN' })
+  await assert.rejects(fetchTrend(stock), /invalid analysis/)
 })
 
 test('an unavailable optional LSTM preserves the statistical forecast and model details', async () => {

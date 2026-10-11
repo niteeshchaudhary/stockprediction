@@ -1,6 +1,6 @@
 {
   "source": "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
-  "updated": "2026-10-05",
+  "updated": "2026-10-11",
   "stocks": [
     {
       "symbol": "20MICRONS",
@@ -353,6 +353,10 @@
     {
       "symbol": "AGL",
       "name": "Allcargo Global Limited"
+    },
+    {
+      "symbol": "AGOL",
+      "name": "Ashapuri Gold Ornament Limited"
     },
     {
       "symbol": "AGRITECH",
@@ -983,10 +987,6 @@
       "name": "Augmont Enterprises Limited"
     },
     {
-      "symbol": "AURIGROW",
-      "name": "Auri Grow India Limited"
-    },
-    {
       "symbol": "AURIONPRO",
       "name": "Aurionpro Solutions Limited"
     },
@@ -1319,6 +1319,10 @@
       "name": "Bharat Electronics Limited"
     },
     {
+      "symbol": "BELDING",
+      "name": "Belding India Limited"
+    },
+    {
       "symbol": "BELLACASA",
       "name": "Bella Casa Fashion & Retail Limited"
     },
@@ -1361,10 +1365,6 @@
     {
       "symbol": "BFUTILITIE",
       "name": "BF Utilities Limited"
-    },
-    {
-      "symbol": "BGLOBAL",
-      "name": "Bharatiya Global Infomedia Limited"
     },
     {
       "symbol": "BGRENERGY",
@@ -1513,10 +1513,6 @@
     {
       "symbol": "BLSE",
       "name": "BLS E-Services Limited"
-    },
-    {
-      "symbol": "BLUECHIP",
-      "name": "Blue Chip India Limited"
     },
     {
       "symbol": "BLUECLOUDS",
@@ -1811,10 +1807,6 @@
       "name": "Century Extrusions Limited"
     },
     {
-      "symbol": "CENTEXT-RE",
-      "name": "Century Extrusions Limited-RE"
-    },
-    {
       "symbol": "CENTRALBK",
       "name": "Central Bank of India"
     },
@@ -1833,10 +1825,6 @@
     {
       "symbol": "CERA",
       "name": "Cera Sanitaryware Limited"
-    },
-    {
-      "symbol": "CEREBRAINT",
-      "name": "Cerebra Integrated Technologies Limited"
     },
     {
       "symbol": "CESC",
@@ -1935,10 +1923,6 @@
       "name": "Cipla Limited"
     },
     {
-      "symbol": "CLCIND",
-      "name": "CLC Industries Limited"
-    },
-    {
       "symbol": "CLEAN",
       "name": "Clean Science and Technology Limited"
     },
@@ -1953,10 +1937,6 @@
     {
       "symbol": "CLSEL",
       "name": "Chaman Lal Setia Exports Limited"
-    },
-    {
-      "symbol": "CMICABLES",
-      "name": "CMI Limited"
     },
     {
       "symbol": "CMLL",
@@ -2641,10 +2621,6 @@
     {
       "symbol": "EDELWEISS",
       "name": "Edelweiss Financial Services Limited"
-    },
-    {
-      "symbol": "EDUCOMP",
-      "name": "Educomp Solutions Limited"
     },
     {
       "symbol": "EFCIL",
@@ -4147,10 +4123,6 @@
       "name": "India Motor Parts and Accessories Limited"
     },
     {
-      "symbol": "IMPEXFERRO",
-      "name": "Impex Ferro Tech Limited"
-    },
-    {
       "symbol": "INA",
       "name": "Insolation Energy Limited"
     },
@@ -5251,10 +5223,6 @@
       "name": "La Opala RG Limited"
     },
     {
-      "symbol": "LASA",
-      "name": "Lasa Supergenerics Limited"
-    },
-    {
       "symbol": "LASERPOWER",
       "name": "Laser Power & Infra Limited"
     },
@@ -6015,10 +5983,6 @@
       "name": "Monte Carlo Fashions Limited"
     },
     {
-      "symbol": "MORARJEE",
-      "name": "Morarjee Textiles Limited"
-    },
-    {
       "symbol": "MOREPENLAB",
       "name": "Morepen Laboratories Limited"
     },
@@ -6163,10 +6127,6 @@
       "name": "NACL Industries Limited"
     },
     {
-      "symbol": "NAGAFERT",
-      "name": "Nagarjuna Fertilizers and Chemicals Limited"
-    },
-    {
       "symbol": "NAGREEKCAP",
       "name": "Nagreeka Capital & Infrastructure Limited"
     },
@@ -6201,6 +6161,10 @@
     {
       "symbol": "NATCAPSUQ",
       "name": "Natural Capsules Limited"
+    },
+    {
+      "symbol": "NATCO-RE",
+      "name": "Natco Pharma Limited-RE"
     },
     {
       "symbol": "NATCOPHARM",
@@ -6441,6 +6405,10 @@
     {
       "symbol": "NITTAGELA",
       "name": "Nitta Gelatin India Limited"
+    },
+    {
+      "symbol": "NITYAS",
+      "name": "Nityas Gems and Jewellery Limited"
     },
     {
       "symbol": "NIVABUPA",
@@ -6717,10 +6685,6 @@
     {
       "symbol": "ORKLAINDIA",
       "name": "Orkla India Limited"
-    },
-    {
-      "symbol": "ORTEL",
-      "name": "Ortel Communications Limited"
     },
     {
       "symbol": "ORTINGLOBE",
@@ -7417,10 +7381,6 @@
     {
       "symbol": "RAJTV",
       "name": "Raj Television Network Limited"
-    },
-    {
-      "symbol": "RAJVIR",
-      "name": "Rajvir Industries Limited"
     },
     {
       "symbol": "RALLIS",
@@ -8143,10 +8103,6 @@
       "name": "Saint Gobain Sekurit India Limited"
     },
     {
-      "symbol": "SELMC",
-      "name": "SEL Manufacturing Company Limited"
-    },
-    {
       "symbol": "SEMAC",
       "name": "Semac Construction Limited"
     },
@@ -8225,6 +8181,10 @@
     {
       "symbol": "SHAHALLOYS",
       "name": "Shah Alloys Limited"
+    },
+    {
+      "symbol": "SHAHINVEST",
+      "name": "Shah Investor's Home Limited"
     },
     {
       "symbol": "SHAILY",
@@ -8551,10 +8511,6 @@
       "name": "SKF India (Industrial) Limited"
     },
     {
-      "symbol": "SKIL",
-      "name": "SKIL Infrastructure Limited"
-    },
-    {
       "symbol": "SKIPPER",
       "name": "Skipper Limited"
     },
@@ -8691,10 +8647,6 @@
       "name": "Spectrum Electrical Industries Limited"
     },
     {
-      "symbol": "SPELS",
-      "name": "SPEL Semiconductor Limited"
-    },
-    {
       "symbol": "SPENCERS",
       "name": "Spencer's Retail Limited"
     },
@@ -8741,6 +8693,10 @@
     {
       "symbol": "SRIKPRIND",
       "name": "Sri KPR Industries Limited"
+    },
+    {
+      "symbol": "SRIT",
+      "name": "SRIT India Limited"
     },
     {
       "symbol": "SRM",
@@ -9763,10 +9719,6 @@
       "name": "The United Nilgiri Tea Estates Company Limited"
     },
     {
-      "symbol": "UNIVAFOODS",
-      "name": "Univa Foods Limited"
-    },
-    {
       "symbol": "UNIVASTU",
       "name": "Univastu India Limited"
     },
@@ -10133,6 +10085,10 @@
     {
       "symbol": "VMSTMT",
       "name": "VMS TMT Limited"
+    },
+    {
+      "symbol": "VNL",
+      "name": "Vishal Nirmiti Limited"
     },
     {
       "symbol": "VOEPL",

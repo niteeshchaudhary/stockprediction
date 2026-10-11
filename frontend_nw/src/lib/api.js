@@ -7,7 +7,7 @@ export async function request(path, { signal, timeout = 60000 } = {}) {
   signal?.addEventListener('abort', cancel, { once: true })
   const timer = setTimeout(cancel, timeout)
   try {
-    const response = await fetch(`${API_BASE}${path}`, { signal: controller.signal })
+    const response = await fetch(`${API_BASE}${path}`, { signal: controller.signal, cache: 'no-store' })
     const payload = await response.json().catch(() => null)
     if (!response.ok) throw new Error(payload?.error || 'The data service is unavailable. Check that the backend is running, then retry.')
     if (payload == null) throw new Error('The data service returned an invalid response.')
@@ -41,7 +41,8 @@ export async function fetchQuote(stock, options) {
     throw new Error('A current quote is unavailable for this company.')
   }
   const previous = price - change
-  return { price, change, percent: previous > 0 ? change / previous * 100 : null }
+  return { price, change, percent: previous > 0 ? change / previous * 100 : null,
+    quotedAt: quote.quoted_at || null, fetchedAt: quote.fetched_at || null, provider: quote.provider || null }
 }
 
 export async function fetchForecast(stock, options) {
@@ -49,5 +50,14 @@ export async function fetchForecast(stock, options) {
   const statistical = Number(payload.pvalue)
   const lstm = payload.pvaluelstm == null ? null : Number(payload.pvaluelstm)
   if (!Number.isFinite(statistical) || statistical <= 0 || (lstm !== null && (!Number.isFinite(lstm) || lstm <= 0))) throw new Error('The models returned an invalid forecast.')
-  return { statistical, lstm, models: payload.models, asOf: payload.as_of, horizon: payload.horizon, warnings: payload.warnings || [] }
+  return { statistical, lstm, models: payload.models, asOf: payload.as_of, horizon: payload.horizon, warnings: payload.warnings || [], ...(payload.analysis ? { analysis: payload.analysis } : {}) }
+}
+
+export async function fetchTrend(stock, options) {
+  const result = await request(`/data/trend/${encodeURIComponent(stock.id)}`, { timeout: 90000, ...options })
+  if (!Number.isFinite(result.score) || !Number.isFinite(result.coverage) || !Array.isArray(result.factors) ||
+      !result.fundamentals || !result.indicators || !Array.isArray(result.news) || !Array.isArray(result.policy_news) || !Array.isArray(result.warnings)) {
+    throw new Error('The trend service returned an invalid analysis.')
+  }
+  return result
 }

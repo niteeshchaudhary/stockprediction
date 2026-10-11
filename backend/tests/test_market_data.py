@@ -117,6 +117,29 @@ class MarketDataTests(unittest.TestCase):
         self.assertEqual(params["end_date"], "2026-01-07")
         self.assertEqual(frame.Close.tolist(), [101])
 
+    def test_bse_single_session_quote_uses_previous_close(self):
+        chart = {'meta': {'regularMarketPrice': 110, 'regularMarketTime': 1767657600,
+                         'exchangeTimezoneName': 'UTC', 'chartPreviousClose': 100},
+                 'timestamp': [1767657600], 'indicators': {'quote': [{'close': [110]}]}}
+        with patch.object(data, '_yahoo_chart', return_value=chart):
+            self.assertEqual(data.get_quote('RELIANCE.BO'), ['110.00', '+10.00', '(+10.00%)'])
+
+    def test_bse_twelve_request_uses_exchange_and_symbol(self):
+        with patch.dict(os.environ, {'TWELVE_DATA_API_KEY': 'test-key'}), patch.object(data, '_request_json', return_value={}) as fetch:
+            data._twelve_request('RELIANCE.BO', 'quote')
+        self.assertEqual(fetch.call_args.args[1]['exchange'], 'BSE')
+        self.assertEqual(fetch.call_args.args[1]['symbol'], 'RELIANCE')
+
+    def test_quote_metadata_preserves_provider_time(self):
+        chart = {'meta': {'regularMarketPrice': 110, 'previousClose': 100,
+                         'regularMarketTime': 1767657600}}
+        with patch.object(data, '_yahoo_chart', return_value=chart):
+            result = data.get_quote('RELIANCE.NS', include_metadata=True)
+        self.assertEqual(result['values'][0], '110.00')
+        self.assertEqual(result['provider'], 'yahoo')
+        self.assertEqual(result['quoted_at'], '2026-01-06T00:00:00+00:00')
+        self.assertNotEqual(result['fetched_at'], result['quoted_at'])
+
 
 class RouteTests(unittest.TestCase):
     def setUp(self):
@@ -146,9 +169,9 @@ class RouteTests(unittest.TestCase):
         for company, ticker in [('IRFC.NS', 'IRFC.NS'), ('CANBK.NS', 'CANBK.NS'),
                                 ('BAJAJHFL.NS', 'BAJAJHFL.NS'), ('IOB.NS', 'IOB.NS'),
                                 ('tata steel', 'TATASTEEL.NS'), ('ticker:NVDA', 'NVDA')]:
-            with self.subTest(company=company), patch.object(server, 'get_quote', return_value=['100', '+1', '(+1%)']) as fetch:
+            with self.subTest(company=company), patch.object(server, 'get_quote', return_value={'values': ['100', '+1', '(+1%)']}) as fetch:
                 self.assertEqual(self.client.get('/data/current/' + company).status_code, 200)
-                fetch.assert_called_once_with(ticker)
+                fetch.assert_called_once_with(ticker, include_metadata=True)
 
     def test_short_history_cannot_reach_prediction_models(self):
         with patch.object(server, "get_history", return_value=history()):

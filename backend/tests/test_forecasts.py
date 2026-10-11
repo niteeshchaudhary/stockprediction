@@ -10,6 +10,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import forecast_service
+import forecast_models
 import server
 
 
@@ -19,6 +20,35 @@ def candles(closes):
 
 
 class ForecastTests(unittest.TestCase):
+    def test_ensemble_constant_prices_and_finite_indicators(self):
+        result = forecast_models.analyse(np.full(65, 123.), forecast_service.statistical_forecast)
+        self.assertAlmostEqual(result['price'], 123.)
+        self.assertEqual(len(result['models']), 5)
+        self.assertEqual(result['evaluation_sessions'], 10)
+        self.assertAlmostEqual(sum(model['weight'] for model in result['models']), 1.)
+        self.assertEqual(result['indicators']['rsi14'], 50.)
+        self.assertEqual(result['indicators']['annualized_volatility'], 0.)
+        self.assertEqual(result['direction_accuracy'], 100.)
+        self.assertFalse(result['beats_baseline'])
+
+    def test_holdout_targets_cannot_change_ensemble_weights(self):
+        closes = 100 * np.exp(np.cumsum(np.random.default_rng(4).normal(.001, .01, 100)))
+        changed = closes.copy()
+        changed[-20:] *= np.exp(np.linspace(0, .5, 20))
+        original = forecast_models.analyse(closes, forecast_service.statistical_forecast)
+        altered = forecast_models.analyse(changed, forecast_service.statistical_forecast)
+        np.testing.assert_allclose([model['weight'] for model in original['models']],
+                                   [model['weight'] for model in altered['models']])
+        self.assertNotEqual(original['mae'], altered['mae'])
+
+    def test_models_are_scale_invariant_and_positive_on_volatile_prices(self):
+        closes = 100 * np.exp(np.cumsum(np.random.default_rng(12).normal(0, .05, 100)))
+        for function in [forecast_models.momentum, forecast_models.damped_trend, forecast_models.technical_ridge]:
+            with self.subTest(model=function.__name__):
+                price = function(closes)
+                self.assertTrue(np.isfinite(price) and price > 0)
+                self.assertAlmostEqual(function(closes * 10), price * 10, places=6)
+
     def test_constant_price_remains_constant(self):
         with patch.dict(os.environ, {'ENABLE_LSTM': 'false'}):
             result = forecast_service.generate_forecast(candles(np.full(100, 123.0)))

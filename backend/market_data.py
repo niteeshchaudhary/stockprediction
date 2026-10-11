@@ -98,9 +98,11 @@ def _twelve_request(ticker, endpoint, **params):
     api_key = os.environ.get("TWELVE_DATA_API_KEY")
     if not api_key:
         raise MarketDataError("TWELVE_DATA_API_KEY is required for Twelve Data")
-    symbol = ticker.removesuffix(".NS")
+    symbol = ticker.removesuffix(".NS").removesuffix('.BO')
     if ticker.endswith(".NS"):
         params["exchange"] = "NSE"
+    elif ticker.endswith('.BO'):
+        params['exchange'] = 'BSE'
     # Twelve Data uses a dot for US share classes, rather than Yahoo's dash.
     if symbol in ("BRK-A", "BRK-B"):
         symbol = symbol.replace("-", ".")
@@ -166,7 +168,7 @@ def get_history(ticker, start="2023-01-01", end=None):
     raise MarketDataError(f"Unable to fetch stock history for {ticker}. Please try again later.")
 
 
-def get_quote(ticker):
+def get_quote(ticker, include_metadata=False):
     for provider in _providers():
         try:
             if provider == "twelve":
@@ -185,12 +187,29 @@ def get_quote(ticker):
                     closes = chart["indicators"]["quote"][0]["close"]
                     previous_closes = [close for timestamp, close in zip(chart["timestamp"], closes)
                                        if close is not None and pd.Timestamp(timestamp, unit="s", tz="UTC").tz_convert(zone).date() < market_date]
-                    previous = previous_closes[-1]
+                    if previous_closes:
+                        previous = previous_closes[-1]
+                    elif len(chart.get('timestamp', [])) == 1:
+                        # Some BSE charts contain only the latest session. In that
+                        # case chartPreviousClose precedes that single session.
+                        previous = result.get('chartPreviousClose')
+                    else:
+                        raise ValueError('Previous trading close unavailable')
                 previous = float(previous)
             if not all(0 < value < float("inf") for value in (price, previous)):
                 raise ValueError("Invalid quote")
             change = price - previous
-            return [f"{price:.2f}", f"{change:+.2f}", f"({change / previous * 100:+.2f}%)"]
+            values = [f"{price:.2f}", f"{change:+.2f}", f"({change / previous * 100:+.2f}%)"]
+            if not include_metadata:
+                return values
+            # Keep the provider's quote time separate from our successful fetch time.
+            raw_time = result.get('regularMarketTime') if provider == 'yahoo' else result.get('timestamp')
+            try:
+                quoted_at = datetime.fromtimestamp(float(raw_time), timezone.utc).isoformat()
+            except (TypeError, ValueError, OverflowError, OSError):
+                quoted_at = None
+            return {'values': values, 'provider': provider, 'quoted_at': quoted_at,
+                    'fetched_at': datetime.now(timezone.utc).isoformat()}
         except (MarketDataError, KeyError, TypeError, ValueError, IndexError):
             logger.warning("%s quote unavailable for %s", provider, ticker)
     raise MarketDataError(f"Unable to fetch the current price for {ticker}. Please try again later.")

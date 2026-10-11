@@ -3,12 +3,17 @@ import Icon from './components/Icon'
 import StockSearch, { CompanyMark } from './components/StockSearch'
 import PriceChart from './components/PriceChart'
 import Guide from './components/Guide'
+import ForecastAnalysis from './components/ForecastAnalysis'
+import TrendAnalysis from './components/TrendAnalysis'
+import WatchlistPicker from './components/WatchlistPicker'
+import { addToWatchlist } from './lib/watchlist'
 import useMarketData from './hooks/useMarketData'
 import useWatchlist from './hooks/useWatchlist'
 import useMobile from './hooks/useMobile'
 import { fetchForecast } from './lib/api'
-import { getStock, DEFAULT_WATCHLIST, money, number, formatDate, filterHistory, exportHistory } from './lib/stocks'
+import { getStock, EXCHANGE_COUNTS, DEFAULT_WATCHLIST, money, number, formatDate, filterHistory, exportHistory } from './lib/stocks'
 import './App.css'
+import './nse-theme.css'
 
 function readWatchlist() {
   try {
@@ -20,6 +25,13 @@ function readWatchlist() {
 function Change({ percent, className = '' }) {
   if (!Number.isFinite(percent)) return <span className={`muted ${className}`}>—</span>
   return <span className={`change ${percent < 0 ? 'negative' : 'positive'} ${className}`}><Icon name="trend" size={14}/>{percent >= 0 ? '+' : ''}{percent.toFixed(2)}%</span>
+}
+
+function quoteTime(quote) {
+  const timestamp = new Date(quote?.quotedAt)
+  return quote?.quotedAt && Number.isFinite(timestamp.getTime())
+    ? `Quote ${timestamp.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}`
+    : 'Quote time unavailable'
 }
 
 const NAVIGATION = [
@@ -37,7 +49,7 @@ function WatchlistRows({ detailed = false, watchlist, selected, selectedQuote, w
       return <div className={`watchlist-row ${id === selected ? 'selected' : ''}`} key={id}>
         <button className="watchlist-company" onClick={() => onSelect(id)}><CompanyMark stock={item} small/><span><strong>{detailed ? item.name : item.symbol}</strong><small>{detailed ? item.symbol : item.name}</small></span></button>
         {detailed && <span className="market-pill">{item.market}</span>}
-        <span className="watchlist-price">{quote ? money(quote.price, item.currency) : '—'}{!detailed && <Change percent={quote?.percent}/>}</span>
+        <span className="watchlist-price" title={quoteTime(quote)}>{quote ? money(quote.price, item.currency) : '—'}{!detailed && <Change percent={quote?.percent}/>}<small className="quote-status">{quote?.unavailable ? 'Refresh failed · last price' : quoteTime(quote)}</small></span>
         {detailed && <Change percent={quote?.percent}/>}
         {detailed && <button className="icon-button" aria-label={`Remove ${item.name} from watchlist`} onClick={() => onToggle(id)}><Icon name="close" size={17}/></button>}
       </div>
@@ -53,6 +65,7 @@ function App() {
   const [refresh, setRefresh] = useState(0)
   const [watchlist, setWatchlist] = useState(readWatchlist)
   const [guide, setGuide] = useState(false)
+  const [addingStocks, setAddingStocks] = useState(false)
   const [sidebar, setSidebar] = useState(false)
   const mobile = useMobile()
   const [forecast, setForecast] = useState({ id: null, loading: false, result: null, error: null })
@@ -60,7 +73,7 @@ function App() {
   const forecastSection = useRef(null)
   const stock = getStock(selected)
   const market = useMarketData(stock, refresh)
-  const watchQuotes = useWatchlist(watchlist, refresh)
+  const watchQuotes = useWatchlist(watchlist, refresh, selected)
   const visibleHistory = filterHistory(market.history, range)
   const latest = market.history.at(-1)
   const previous = market.history.at(-2)
@@ -70,7 +83,7 @@ function App() {
   const saved = watchlist.includes(selected)
   const activeForecast = forecast.id === selected ? forecast : { loading: false, result: null, error: null }
   const available = Boolean(market.quote || market.history.length)
-  const status = market.loading ? 'Connecting' : market.errors.length ? (available ? 'Partial data' : 'Disconnected') : 'Connected'
+  const status = market.refreshing ? 'Updating' : market.errors.length ? (available ? 'Refresh incomplete' : 'Unavailable') : 'Auto-refresh · 2 min'
 
   useEffect(() => {
     try { localStorage.setItem('folio-watchlist', JSON.stringify(watchlist)) } catch { /* Watchlist still works when storage is unavailable. */ }
@@ -130,17 +143,19 @@ function App() {
     <div className="main-shell">
       <header className="topbar"><div className="breadcrumb"><button className="mobile-menu icon-button" onClick={() => setSidebar(true)} aria-label="Open navigation"><Icon name="menu"/></button><span>Workspace</span><Icon name="chevron" size={13}/><strong>{NAVIGATION.find(item => item.id === view)?.label}</strong></div><StockSearch onSelect={selectStock}/><button className="topbar-help icon-button" onClick={() => setGuide(true)} aria-label="Open market guide"><Icon name="book"/></button></header>
       <main>
-        <section className="page-heading"><div><div className="eyebrow">YOUR MARKET. IN PERSPECTIVE.</div><h1>{view === 'watchlist' ? 'Your watchlist' : view === 'history' ? 'The story behind the price' : 'A sharper view of the market'}<span className="heading-dot">.</span></h1><p>{view === 'watchlist' ? 'The companies you care about, all in one place.' : view === 'history' ? 'Explore daily prices and take the data with you.' : 'Follow your favorites. Discover patterns. Look ahead.'}</p></div><div className="heading-actions"><span className={`connection-badge ${status === 'Connected' ? 'connected' : status === 'Connecting' ? 'pending' : 'offline'}`}><span/>{status}</span><button className="secondary-button refresh-button" aria-label="Refresh market data" disabled={market.loading} onClick={() => setRefresh(value => value + 1)}><Icon name="refresh" size={16} className={market.loading ? 'spinning' : ''}/><span>Refresh</span></button></div></section>
+        <div className="market-strip" aria-label="Exchange coverage"><div><span><strong>NSE</strong><small>Searchable listings</small></span><b>{number(EXCHANGE_COUNTS.NSE, 0)}</b></div><div><span><strong>BSE</strong><small>Searchable listings</small></span><b>{number(EXCHANGE_COUNTS.BSE, 0)}</b></div><div><span><strong>{stock.symbol} · {stock.market}</strong><small>Latest available price</small></span><b>{money(currentPrice, stock.currency)}</b></div></div>
+        <section className="page-heading"><div><div className="eyebrow">EQUITY MARKET</div><h1>{view === 'watchlist' ? 'Your watchlist' : view === 'history' ? 'The story behind the price' : 'Market overview'}<span className="heading-dot">.</span></h1><p>{view === 'watchlist' ? 'The companies you care about, all in one place.' : view === 'history' ? 'Explore daily prices and take the data with you.' : 'Quotes, trading activity and price history across NSE and BSE.'}</p></div><div className="heading-actions"><span className={`connection-badge ${status === 'Auto-refresh · 2 min' ? 'connected' : status === 'Updating' ? 'pending' : 'offline'}`}><span/>{status}</span><button className="secondary-button refresh-button" aria-label="Refresh market data" disabled={market.refreshing} onClick={() => setRefresh(value => value + 1)}><Icon name="refresh" size={16} className={market.refreshing ? 'spinning' : ''}/><span>Refresh</span></button></div></section>
 
         {market.errors.length > 0 && view !== 'watchlist' && <div className="error-banner" role="alert"><Icon name="info" size={19}/><div><strong>{available ? 'Some market data is unavailable' : 'Let’s reconnect to the market'}</strong><p>{market.errors.join(' ')}</p></div><button onClick={() => setRefresh(value => value + 1)} disabled={market.loading}>Retry <Icon name="refresh" size={14}/></button></div>}
 
-        {view === 'watchlist' ? <section className="panel full-watchlist"><div className="panel-header"><div><h2>On your radar <span className="count-badge">{watchlist.length}</span></h2><p>Search thousands of companies and save as many as you like.</p></div><button className="secondary-button" onClick={() => document.querySelector('[aria-label="Search stocks"]')?.focus()}><Icon name="plus" size={16}/>Add stock</button></div><WatchlistRows detailed watchlist={watchlist} selected={selected} selectedQuote={market.quote} watchQuotes={watchQuotes} onSelect={selectStock} onToggle={toggleWatchlist}/></section> : <>
+        {view === 'watchlist' ? <section className="panel full-watchlist"><div className="panel-header"><div><h2>On your radar <span className="count-badge">{watchlist.length}</span></h2><p>Search thousands of companies and save as many as you like.</p></div><button className="secondary-button" onClick={() => setAddingStocks(true)}><Icon name="plus" size={16}/>Add stock</button></div><WatchlistRows detailed watchlist={watchlist} selected={selected} selectedQuote={market.quote ? { ...market.quote, unavailable: market.errors.length > 0 } : null} watchQuotes={watchQuotes} onSelect={selectStock} onToggle={toggleWatchlist}/></section> : <>
           <div className="market-stats">
-            <div className="stat-card"><div className="stat-label">Latest price <Icon name="trend" size={16}/></div><div className="stat-value">{money(currentPrice, stock.currency)}<Change percent={dayPercent} className="stat-change"/></div><span className="stat-footnote">{stock.symbol} · {market.quote ? 'Latest available quote' : 'Last recorded close'}</span></div>
+            <div className="stat-card"><div className="stat-label">Latest price <Icon name="trend" size={16}/></div><div className="stat-value">{money(currentPrice, stock.currency)}<Change percent={dayPercent} className="stat-change"/></div><span className="stat-footnote">{stock.symbol} · {market.quote ? quoteTime(market.quote) : 'Last recorded close'}</span></div>
             <div className="stat-card"><div className="stat-label">Trading range <Icon name="chart" size={16}/></div><div className="stat-value range-value">{money(latest?.Low, stock.currency)} <span>—</span> {money(latest?.High, stock.currency)}</div><span className="stat-footnote">{latest ? `${formatDate(latest.Date)} · Daily low & high` : 'Latest trading session'}</span></div>
             <div className="stat-card"><div className="stat-label">Trading volume <Icon name="grid" size={16}/></div><div className="stat-value">{latest ? new Intl.NumberFormat('en-IN', { notation: 'compact', maximumFractionDigits: 2 }).format(latest.Volume) : '—'}<span className="stat-unit">shares</span></div><span className="stat-footnote">{latest ? `${formatDate(latest.Date)} · Reported volume` : 'Latest trading session'}</span></div>
           </div>
 
+          <TrendAnalysis stock={stock}/>
           <div className="dashboard-grid"><div className="primary-column">
             <section className="panel price-panel" aria-busy={market.loading}>
               <div className="stock-heading"><div className="stock-identity"><CompanyMark stock={stock}/><div><h2>{stock.name}</h2><div className="stock-subtitle">{stock.symbol}<span>·</span><span className="market-pill">{stock.market}</span><span>·</span>{stock.sector}</div></div></div><button className={`icon-button save-stock ${saved ? 'saved' : ''}`} aria-label={`${saved ? 'Remove' : 'Add'} ${stock.name} ${saved ? 'from' : 'to'} watchlist`} aria-pressed={saved} onClick={() => toggleWatchlist(selected)}><Icon name="star" size={21}/></button></div>
@@ -149,16 +164,18 @@ function App() {
               <div className="chart-footer"><span><i/>Closing price <span className="currency-label">· {stock.currency}</span></span><span><Icon name="clock" size={13}/>{latest ? `Latest session ${formatDate(latest.Date, { year: 'numeric' })}` : 'Waiting for price history'}</span></div>
             </section>
 
-            <section className="panel history-panel"><div className="panel-header"><div><h2>Price history</h2><p>{view === 'history' ? `Showing ${Math.min(100, visibleHistory.length)} recent sessions in the selected range` : 'A closer look at the latest trading sessions'}</p></div><button className="secondary-button export-button" disabled={!market.history.length} onClick={() => exportHistory(market.history, stock.symbol)}><Icon name="download" size={16}/>Export CSV</button></div><div className="table-scroll"><table><thead><tr><th>Date</th><th>Open</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th></tr></thead><tbody>{[...visibleHistory].reverse().slice(0, view === 'history' ? 100 : 5).map(row => <tr key={row.Date}><td>{formatDate(row.Date, { year: 'numeric' })}</td><td>{number(row.Open)}</td><td>{number(row.High)}</td><td>{number(row.Low)}</td><td className="close-cell">{number(row.Close)}</td><td>{number(row.Volume, 0)}</td></tr>)}</tbody></table>{!visibleHistory.length && <div className="table-empty">{market.loading ? 'Loading trading sessions…' : 'No trading sessions available yet.'}</div>}</div><div className="table-footer"><span>Prices in {stock.currency} · Daily interval</span><span>{market.history.length ? `${number(market.history.length, 0)} sessions available` : 'History updates when connected'}</span></div></section>
+            <section className="panel history-panel"><div className="panel-header"><div><h2>Price history</h2><p>{view === 'history' ? `Showing ${Math.min(100, visibleHistory.length)} recent sessions in the selected range` : 'A closer look at the latest trading sessions'}</p></div><button className="secondary-button export-button" disabled={!market.history.length} onClick={() => exportHistory(market.history, stock.symbol)}><Icon name="download" size={16}/>Export CSV</button></div><div className="table-scroll"><table><thead><tr><th>Date</th><th>Open</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th></tr></thead><tbody>{[...visibleHistory].reverse().slice(0, view === 'history' ? 100 : 5).map(row => <tr key={row.Date}><td>{formatDate(row.Date, { year: 'numeric' })}</td><td>{number(row.Open)}</td><td>{number(row.High)}</td><td>{number(row.Low)}</td><td className="close-cell">{number(row.Close)}</td><td>{number(row.Volume, 0)}</td></tr>)}</tbody></table>{!visibleHistory.length && <div className="table-empty">{market.loading ? 'Loading trading sessions…' : 'No trading sessions available yet.'}</div>}</div><div className="table-footer"><span>Prices in {stock.currency} · Daily interval</span><span>{market.history.length ? `${number(market.history.length, 0)} ${market.history.length === 1 ? 'session' : 'sessions'} available` : 'History updates when connected'}</span></div></section>
           </div>
 
-          <div className="secondary-column"><section className="forecast-panel" ref={forecastSection}><div className="forecast-header"><span className="forecast-icon"><Icon name="sparkles" size={20}/></span><span className="lab-pill">MODEL LAB</span></div><h2>A glimpse of<br/> what’s next.</h2><p>Next-session estimates for {stock.symbol}.</p><div className="forecast-model"><div><span className="model-dot statistical"/><span>Statistical model</span><button className="model-info" aria-label="Learn about the statistical model" onClick={() => setGuide(true)}><Icon name="info" size={14}/></button></div><strong>{money(activeForecast.result?.statistical, stock.currency)}</strong><small>{activeForecast.result?.models?.statistical || 'Recent daily returns'}</small></div><div className="forecast-model"><div><span className="model-dot lstm"/><span>LSTM model</span><button className="model-info" aria-label="Learn about the LSTM model" onClick={() => setGuide(true)}><Icon name="info" size={14}/></button></div><strong>{money(activeForecast.result?.lstm, stock.currency)}</strong><small>{activeForecast.result && activeForecast.result.lstm === null ? 'Unavailable on this server' : 'Price sequences'}</small></div>{activeForecast.result && <p className="forecast-note">{activeForecast.result.horizon}{activeForecast.result.asOf && ` · Based on ${activeForecast.result.asOf}`}{activeForecast.result.warnings.map((warning, index) => <span key={index}><br/>{warning}</span>)}</p>}{activeForecast.error && <p className="forecast-error" role="alert">{activeForecast.error}</p>}<button className="primary-button forecast-button" onClick={generateForecast} disabled={market.loading || market.history.length < 65 || activeForecast.loading}><Icon name={activeForecast.loading ? 'refresh' : 'sparkles'} size={17} className={activeForecast.loading ? 'spinning' : ''}/>{activeForecast.loading ? 'Models are thinking…' : activeForecast.result ? 'Regenerate forecast' : 'Generate forecast'}{!activeForecast.loading && <Icon name="arrow" size={16}/>}</button><p className="forecast-note">{activeForecast.loading ? 'This can take a few minutes. You can still explore your chart.' : market.history.length > 0 && market.history.length < 65 ? 'At least 65 trading sessions are needed.' : 'Experimental estimates. Not investment advice.'}</p></section>
-            <section className="panel watchlist-panel"><div className="panel-header"><h2>Your watchlist <span className="count-badge">{watchlist.length}</span></h2><button className="icon-button" onClick={() => setView('watchlist')} aria-label="View full watchlist"><Icon name="arrow" size={18}/></button></div><WatchlistRows watchlist={watchlist} selected={selected} selectedQuote={market.quote} watchQuotes={watchQuotes} onSelect={selectStock} onToggle={toggleWatchlist}/><button className="watchlist-add" onClick={() => toggleWatchlist(selected)}><Icon name={saved ? 'check' : 'plus'} size={15}/>{saved ? `${stock.symbol} is on your radar` : `Add ${stock.symbol} to watchlist`}</button></section>
+          <div className="secondary-column"><section className="forecast-panel" ref={forecastSection}><div className="forecast-header"><span className="forecast-icon"><Icon name="sparkles" size={20}/></span><span className="lab-pill">MODEL LAB</span></div><h2>A glimpse of<br/> what’s next.</h2><p>Next-session estimates for {stock.symbol}.</p><div className="forecast-model"><div><span className="model-dot statistical"/><span>Statistical model</span><button className="model-info" aria-label="Learn about the statistical model" onClick={() => setGuide(true)}><Icon name="info" size={14}/></button></div><strong>{money(activeForecast.result?.statistical, stock.currency)}</strong><small>{activeForecast.result?.models?.statistical || 'Recent daily returns'}</small></div><div className="forecast-model"><div><span className="model-dot lstm"/><span>LSTM model</span><button className="model-info" aria-label="Learn about the LSTM model" onClick={() => setGuide(true)}><Icon name="info" size={14}/></button></div><strong>{money(activeForecast.result?.lstm, stock.currency)}</strong><small>{activeForecast.result && activeForecast.result.lstm === null ? 'Unavailable on this server' : 'Price sequences'}</small></div>{activeForecast.result && <ForecastAnalysis analysis={activeForecast.result.analysis} currency={stock.currency}/>}
+{activeForecast.result && <p className="forecast-note">{activeForecast.result.horizon}{activeForecast.result.asOf && ` · Based on ${activeForecast.result.asOf}`}{activeForecast.result.warnings.map((warning, index) => <span key={index}><br/>{warning}</span>)}</p>}{activeForecast.error && <p className="forecast-error" role="alert">{activeForecast.error}</p>}<button className="primary-button forecast-button" onClick={generateForecast} disabled={market.loading || market.history.length < 65 || activeForecast.loading}><Icon name={activeForecast.loading ? 'refresh' : 'sparkles'} size={17} className={activeForecast.loading ? 'spinning' : ''}/>{activeForecast.loading ? 'Models are thinking…' : activeForecast.result ? 'Regenerate forecast' : 'Generate forecast'}{!activeForecast.loading && <Icon name="arrow" size={16}/>}</button><p className="forecast-note">{activeForecast.loading ? 'This can take a few minutes. You can still explore your chart.' : market.history.length > 0 && market.history.length < 65 ? 'At least 65 trading sessions are needed.' : 'Experimental estimates. Not investment advice.'}</p></section>
+            <section className="panel watchlist-panel"><div className="panel-header"><h2>Your watchlist <span className="count-badge">{watchlist.length}</span></h2><button className="icon-button" onClick={() => setView('watchlist')} aria-label="View full watchlist"><Icon name="arrow" size={18}/></button></div><WatchlistRows watchlist={watchlist} selected={selected} selectedQuote={market.quote ? { ...market.quote, unavailable: market.errors.length > 0 } : null} watchQuotes={watchQuotes} onSelect={selectStock} onToggle={toggleWatchlist}/><button className="watchlist-add" disabled={saved} onClick={() => setWatchlist(items => addToWatchlist(items, selected))}><Icon name={saved ? 'check' : 'plus'} size={15}/>{saved ? `${stock.symbol} is on your radar` : `Add ${stock.symbol} to watchlist`}</button></section>
           </div></div>
         </>}
-        <footer className="page-footer"><span><span className="footer-brand">folio.</span>A little clarity goes a long way.</span><span><Icon name="globe" size={13}/>Market data may be delayed{market.updated && ` · Updated ${market.updated.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`}</span></footer>
+        <footer className="page-footer"><span><span className="footer-brand">folio.</span>A little clarity goes a long way.</span><span><Icon name="globe" size={13}/>Auto-refresh every 2 min · Provider data may be delayed{market.updated && ` · Last fetched ${market.updated.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`}</span></footer>
       </main>
     </div>
+    {addingStocks && <WatchlistPicker watchlist={watchlist} onAdd={id => setWatchlist(items => addToWatchlist(items, id))} onClose={() => setAddingStocks(false)}/>}
     {guide && <Guide onClose={() => setGuide(false)}/>}
   </div>
 }

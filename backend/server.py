@@ -10,10 +10,13 @@ from flask_cors import CORS
 from market_data import MarketDataError, get_history, get_quote
 from stock_directory import resolve_directory_ticker
 from forecast_service import generate_forecast
+from trend_service import analyse_trend
 from server_logging import configure_logging
+from dotenv import load_dotenv
+
+load_dotenv()
 
 configure_logging()
-
 
 company_tickers = {
     "microsoft": "MSFT",
@@ -126,7 +129,7 @@ def currentInfo(company):
     ticker = resolve_ticker(company)
     if ticker is None:
         return jsonify({'error': 'Unknown company'}), 404
-    return jsonify({'values': get_quote(ticker)})
+    return jsonify(get_quote(ticker, include_metadata=True))
 
 
 def getcurrentInfo(company):
@@ -166,6 +169,25 @@ def predict(company):
     except Exception:
         app.logger.exception('Request %s prediction failed ticker=%s', g.request_id, ticker)
         return jsonify({'error': 'Prediction failed. See backend/logs/server.log for details.', 'request_id': g.request_id}), 503
+
+
+@app.route('/data/trend/<company>', methods=['GET'])
+def trend(company):
+    ticker = resolve_ticker(company)
+    if ticker is None:
+        return jsonify({'error': 'Unknown company'}), 404
+    try:
+        result = analyse_trend(ticker)
+        app.logger.info('Request %s trend completed ticker=%s score=%s coverage=%s',
+                        g.request_id, ticker, result['score'], result['coverage'])
+        return jsonify(result)
+    except MarketDataError:
+        raise
+    except ValueError as error:
+        return jsonify({'error': str(error)}), 422
+    except Exception:
+        app.logger.exception('Request %s trend analysis failed ticker=%s', g.request_id, ticker)
+        return jsonify({'error': 'Trend analysis failed. Please retry.', 'request_id': g.request_id}), 503
 
 
 if __name__ == '__main__':

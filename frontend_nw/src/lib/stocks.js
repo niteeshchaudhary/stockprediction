@@ -1,4 +1,5 @@
 import catalogue from '../../../shared/nse-stocks.json' with { type: 'json' }
+import exchanges from '../../../shared/indian-stocks.json' with { type: 'json' }
 
 const FEATURED_STOCKS = [
   { id: 'reliance', name: 'Reliance Industries', symbol: 'RELIANCE', sector: 'Energy', color: '#5264c9', initials: 'RI' },
@@ -47,13 +48,24 @@ export const STOCKS = [
     ...stock, id: `${stock.symbol}.NS`, market: 'NSE', currency: 'INR', aliases: ALIASES[stock.symbol] || [],
   })),
 ]
+const existingTickers = new Set(STOCKS.map(stock => stock.market === 'NSE' ? `${stock.symbol}.NS` : stock.symbol))
+for (const stock of exchanges.stocks) {
+  if (existingTickers.has(stock.ticker)) continue
+  existingTickers.add(stock.ticker)
+  STOCKS.push(decorateStock({ ...stock, id: stock.id, currency: 'INR', aliases: ALIASES[stock.symbol] || [] }))
+}
+export const EXCHANGE_COUNTS = { NSE: STOCKS.filter(stock => stock.market === 'NSE').length, BSE: STOCKS.filter(stock => stock.market === 'BSE').length }
 const STOCK_BY_ID = new Map(STOCKS.map(stock => [stock.id, stock]))
-const STOCK_BY_TICKER = new Map(STOCKS.map(stock => [stock.market === 'NSE' ? `${stock.symbol}.NS` : stock.symbol, stock]))
+const STOCK_BY_TICKER = new Map(STOCKS.map(stock => [stock.ticker || (stock.market === 'NSE' ? `${stock.symbol}.NS` : stock.symbol), stock]))
+for (const stock of STOCKS) {
+  if (stock.scripCode) STOCK_BY_TICKER.set(`${stock.scripCode}.BO`, stock)
+}
 export const CATALOGUE_UPDATED = catalogue.updated
-export const TICKER_PATTERN = /^[A-Z0-9][A-Z0-9&-]{0,29}(?:\.(?:NS|BO))?$/
+export const TICKER_PATTERN = /^(?:[A-Z0-9][A-Z0-9&.-]{0,29}\.(?:NS|BO)|[A-Z0-9][A-Z0-9&-]{0,29})$/
 
 export function stockFromTicker(value) {
-  const ticker = value.trim().toUpperCase()
+  let ticker = value.trim().toUpperCase()
+  if (/^\d{6}$/.test(ticker)) ticker += '.BO'
   if (!TICKER_PATTERN.test(ticker)) return null
   if (STOCK_BY_TICKER.has(ticker)) return STOCK_BY_TICKER.get(ticker)
   const market = ticker.endsWith('.NS') ? 'NSE' : ticker.endsWith('.BO') ? 'BSE' : 'US'
@@ -74,13 +86,13 @@ function normalizeSearch(value) {
 }
 const SEARCH_INDEX = STOCKS.map(stock => ({ stock,
   name: normalizeSearch(stock.name), symbol: normalizeSearch(stock.symbol),
-  aliases: (stock.aliases || []).map(normalizeSearch),
+  aliases: [...(stock.aliases || []), stock.ticker || '', stock.scripCode || ''].filter(Boolean).map(normalizeSearch),
 }))
 
-export function searchStocks(query, limit = 7) {
+export function searchStocks(query, limit = 20, exchange = 'ALL') {
   const term = normalizeSearch(query)
-  if (!term) return STOCKS.slice(0, limit)
-  return SEARCH_INDEX.filter(entry => entry.name.includes(term) || entry.symbol.includes(term) || entry.aliases.some(alias => alias.includes(term)))
+  if (!term) return STOCKS.filter(stock => exchange === 'ALL' || stock.market === exchange).slice(0, limit)
+  return SEARCH_INDEX.filter(entry => (exchange === 'ALL' || entry.stock.market === exchange) && (entry.name.includes(term) || entry.symbol.includes(term) || entry.aliases.some(alias => alias.includes(term))))
     .sort((a, b) => {
       const rank = entry => entry.symbol === term || entry.aliases.includes(term) ? 0 : entry.name === term ? 1 : entry.symbol.startsWith(term) ? 2 : entry.name.startsWith(term) ? 3 : 4
       return rank(a) - rank(b)

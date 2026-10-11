@@ -6,6 +6,7 @@ import os
 import numpy as np
 
 from market_data import normalize_history
+from forecast_models import analyse
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ def generate_forecast(frame):
         raise ValueError('Statistical model returned an invalid price.')
     lstm = None
     warnings = []
+    
     if os.getenv('ENABLE_LSTM', '').lower() in {'1', 'true', 'yes'}:
         try:
             from lstmprediction import getPrediction
@@ -46,6 +48,9 @@ def generate_forecast(frame):
             warnings.append('LSTM unavailable; the statistical forecast is still available.')
     else:
         warnings.append('LSTM is disabled. Enable it on the backend with TensorFlow installed.')
-    return {'pvalue': statistical, 'pvaluelstm': lstm,
+    analysis = analyse(closes, statistical_forecast)
+    if not analysis['beats_baseline']:
+        warnings.append('The ensemble did not beat the last-close baseline on recent evaluation sessions.')
+    return {'pvalue': statistical, 'pvaluelstm': lstm, 'analysis': analysis,
             'models': {'statistical': 'Ridge autoregression', 'lstm': 'LSTM' if lstm is not None else None},
             'horizon': 'Next trading session', 'as_of': frame.Date.iloc[-1], 'warnings': warnings}

@@ -16,10 +16,17 @@ class StockDirectoryTests(unittest.TestCase):
                 self.assertEqual(resolve_directory_ticker(value), ticker)
 
     def test_custom_tickers_require_explicit_prefix(self):
-        for ticker in ['NVDA', '500325.BO', 'IRFC.NS']:
+        for ticker in ['NVDA', 'IRFC.NS']:
             self.assertEqual(resolve_directory_ticker('ticker:' + ticker), ticker)
         for value in ['unknown', 'ticker:../secret', 'ticker:a/b', 'ticker:BAD.L', 'ticker:']:
             self.assertIsNone(resolve_directory_ticker(value))
+
+    def test_bse_codes_map_to_provider_symbols_and_new_exchange_tickers_are_allowed(self):
+        for value in ['500325', '500325.BO', 'ticker:500325.BO', 'RELIANCE.BO']:
+            self.assertEqual(resolve_directory_ticker(value), 'RELIANCE.BO')
+        self.assertEqual(resolve_directory_ticker('NEWLISTING.NS'), 'NEWLISTING.NS')
+        self.assertEqual(resolve_directory_ticker('NEWLISTING.BO'), 'NEWLISTING.BO')
+        self.assertIsNone(resolve_directory_ticker('../SECRET.NS'))
 
 
 if __name__ == '__main__':
